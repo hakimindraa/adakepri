@@ -47,7 +47,14 @@ export default function Page() {
         <UMKMFilter
           kotaOptions={semuaKota}
           kategoriOptions={kategoriOptions}
-          onChange={(f) => { setFilters(f); setPage(1) }}
+          onChange={(f) => { 
+            setFilters({
+              kota: f.kota || '',
+              kategori: f.kategori || '',
+              q: f.q || ''
+            }); 
+            setPage(1); 
+          }}
         />
 
         <div className="flex items-center justify-between mb-8">

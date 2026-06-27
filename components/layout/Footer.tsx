@@ -7,8 +7,8 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-start gap-12">
           <div className="max-w-sm">
             <Link href="/" className="flex items-center mb-4">
-              <span className="text-xl font-bold text-white">Kepri</span>
-              <span className="text-xl font-bold text-green-300">Hub</span>
+              <span className="text-xl font-bold text-white">Ada</span>
+              <span className="text-xl font-bold text-green-300">Kepri</span>
             </Link>
             <p className="text-sm text-white/50 leading-relaxed">
               Platform direktori lokal nomor satu di Kepulauan Riau. Menghubungkan talenta kreatif dan pelaku UMKM dengan masyarakat luas.
@@ -37,7 +37,7 @@ export default function Footer() {
 
         <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs text-white/30">
-            &copy; {new Date().getFullYear()} KepriHub. Semua Hak Cipta Dilindungi.
+            &copy; {new Date().getFullYear()} AdaKepri. Semua Hak Cipta Dilindungi.
           </p>
           <div className="flex gap-6 text-xs text-white/30">
             <Link href="#" className="hover:text-white">Kebijakan Privasi</Link>

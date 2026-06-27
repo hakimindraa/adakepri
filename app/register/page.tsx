@@ -41,7 +41,7 @@ export default function Page() {
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-12">
               <h1 className="text-3xl md:text-4xl font-700 text-[#1A202C] mb-4">Mulai Perjalanan Anda</h1>
-              <p className="text-[#64748B] text-base">Pilih jenis akun yang sesuai dengan profil Anda di KepriHub.</p>
+              <p className="text-[#64748B] text-base">Pilih jenis akun yang sesuai dengan profil Anda di AdaKepri.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

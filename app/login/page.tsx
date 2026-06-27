@@ -24,8 +24,8 @@ export default function Page() {
         <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-sm border border-[#E2E8F0]">
           <div className="text-center mb-10">
             <Link href="/" className="inline-flex items-center mb-6">
-              <span className="text-2xl font-700 text-[#0077B6]">Kepri</span>
-              <span className="text-2xl font-700 text-[#D97706]">Hub</span>
+              <span className="text-2xl font-700 text-[#0077B6]">Ada</span>
+              <span className="text-2xl font-700 text-[#D97706]">Kepri</span>
             </Link>
             <h1 className="text-2xl font-600 text-[#1A202C]">Selamat Datang Kembali</h1>
             <p className="text-[#64748B] mt-2 text-sm">Masuk untuk mengelola profil dan koneksi Anda.</p>

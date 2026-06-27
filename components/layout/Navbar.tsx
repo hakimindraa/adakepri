@@ -12,8 +12,8 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-1">
-            <span className="text-2xl font-800 text-slate-900 tracking-tight">Kepri</span>
-            <span className="text-2xl font-800 text-primary tracking-tight">Hub</span>
+            <span className="text-2xl font-800 text-slate-900 tracking-tight">Ada</span>
+            <span className="text-2xl font-800 text-primary tracking-tight">Kepri</span>
           </Link>
 
           {/* Desktop Menu */}

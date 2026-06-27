@@ -8,7 +8,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "KepriHub | Direktori Freelancer & UMKM",
+  title: "AdaKepri | Direktori Freelancer & UMKM",
   description: "Satu platform untuk semua kebutuhan lokal di Kepulauan Riau (Kepri).",
 };
 

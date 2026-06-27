@@ -33,9 +33,9 @@ export default function Home() {
   ]
 
   const faqs = [
-    { q: "Apakah mendaftar di KepriHub berbayar?", a: "Tidak. KepriHub adalah platform direktori 100% gratis untuk seluruh freelancer dan UMKM di Kepulauan Riau." },
+    { q: "Apakah mendaftar di AdaKepri berbayar?", a: "Tidak. AdaKepri adalah platform direktori 100% gratis untuk seluruh freelancer dan UMKM di Kepulauan Riau." },
     { q: "Bagaimana cara menghubungi freelancer atau UMKM?", a: "Anda cukup klik profil mereka, lalu tekan tombol 'WhatsApp' untuk langsung terhubung melalui chat tanpa perantara." },
-    { q: "Apakah transaksi dilakukan di dalam website?", a: "Tidak. KepriHub hanya berfungsi sebagai jembatan penghubung. Transaksi dan pembayaran dilakukan secara mandiri antara Anda dan penyedia jasa." },
+    { q: "Apakah transaksi dilakukan di dalam website?", a: "Tidak. AdaKepri hanya berfungsi sebagai jembatan penghubung. Transaksi dan pembayaran dilakukan secara mandiri antara Anda dan penyedia jasa." },
     { q: "Siapa saja yang bisa mendaftar?", a: "Siapa pun talenta kreatif dan pemilik usaha yang berdomisili atau memiliki operasional bisnis di wilayah Kepulauan Riau." }
   ]
 
@@ -203,10 +203,10 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Kenapa Memilih KepriHub? */}
+        {/* Kenapa Memilih AdaKepri? */}
         <section className="py-20 bg-primary/5 rounded-2xl px-8 md:px-12 border border-primary/10">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-700 text-slate-900 mb-4">Kenapa Memilih KepriHub?</h2>
+            <h2 className="text-3xl md:text-4xl font-700 text-slate-900 mb-4">Kenapa Memilih AdaKepri?</h2>
             <p className="text-lg text-slate-600">Kami hadir untuk memperkuat ekosistem ekonomi kreatif di Kepulauan Riau.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
@@ -310,7 +310,7 @@ export default function Home() {
         <div className="container-custom">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-700 text-slate-900 mb-4">Bagaimana Cara Kerjanya?</h2>
-            <p className="text-lg text-slate-600">Mulai langkah Anda di KepriHub dengan proses yang sangat sederhana.</p>
+            <p className="text-lg text-slate-600">Mulai langkah Anda di AdaKepri dengan proses yang sangat sederhana.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-10 relative mb-24">
             <div className="hidden md:block absolute top-10 left-24 right-24 h-0.5 bg-slate-200 z-0"></div>

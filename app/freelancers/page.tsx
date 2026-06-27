@@ -52,7 +52,15 @@ export default function Page() {
         <FreelancerFilter
           kotaOptions={semuaKota}
           skillsOptions={skillsOptions}
-          onChange={(f) => { setFilters(f); setPage(1) }}
+          onChange={(f) => { 
+            setFilters({
+              kota: f.kota || '',
+              skills: f.skills || [],
+              ketersediaan: f.ketersediaan || '',
+              q: f.q || ''
+            }); 
+            setPage(1); 
+          }}
         />
 
         <div className="flex items-center justify-between mb-8">

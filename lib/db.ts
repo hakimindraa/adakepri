@@ -2,12 +2,7 @@ import { PrismaNeon } from '@prisma/adapter-neon';
 import { PrismaClient } from '@prisma/client/index.js';
 
 function createPrismaClient() {
-  const connectionString = process.env.DATABASE_URL;
-
-  if (!connectionString) {
-    throw new Error("DATABASE_URL is not set in environment variables!");
-  }
-
+  const connectionString = process.env.DATABASE_URL || "postgresql://placeholder:placeholder@localhost:5432/placeholder";
   const adapter = new PrismaNeon({ connectionString });
   return new PrismaClient({ adapter });
 }

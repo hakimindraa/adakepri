@@ -22,7 +22,7 @@ export default async function Home({
   const freelancers = await getAllFreelancers()
   const dbUmkms = await getAllUMKM()
 
-  const umkms = dbUmkms.map(u => ({
+  const umkms = dbUmkms.map((u: any) => ({
     id: u.id,
     namaBisnis: u.title,
     kategori: u.category as any,
@@ -42,10 +42,10 @@ export default async function Home({
 
   const totalFreelancer = freelancers.length
   const totalUMKM = umkms.length
-  const totalKota = new Set([...freelancers.map(f => f.kota as string), ...umkms.map(u => u.kota)]).size
+  const totalKota = new Set([...freelancers.map((f: any) => f.kota as string), ...umkms.map((u: any) => u.kota)]).size
 
   // Universal Filter: Filter both Freelancers & UMKMs based on query and city
-  const filteredUmkms = umkms.filter(u => {
+  const filteredUmkms = umkms.filter((u: any) => {
     if (kota && u.kota !== kota) return false
     if (q) {
       const matchName = (u.namaBisnis || '').toLowerCase().includes(q)
@@ -57,7 +57,7 @@ export default async function Home({
     return true
   })
 
-  const filteredFreelancers = freelancers.filter(f => {
+  const filteredFreelancers = freelancers.filter((f: any) => {
     if (kota && f.kota !== kota) return false
     if (q) {
       const matchName = (f.nama || '').toLowerCase().includes(q)
@@ -73,12 +73,12 @@ export default async function Home({
   const isSearching = Boolean(rawQ || kota)
 
   const cityStats: Record<string, { freelancer: number; umkm: number }> = {}
-  freelancers.forEach(f => {
+  freelancers.forEach((f: any) => {
     const k = f.kota || 'Lainnya'
     if (!cityStats[k]) cityStats[k] = { freelancer: 0, umkm: 0 }
     cityStats[k].freelancer++
   })
-  umkms.forEach(u => {
+  umkms.forEach((u: any) => {
     const k = u.kota || 'Lainnya'
     if (!cityStats[k]) cityStats[k] = { freelancer: 0, umkm: 0 }
     cityStats[k].umkm++

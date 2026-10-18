@@ -13,7 +13,7 @@ export default async function UMKMPage({
   const dbUmkms = await getAllUMKM()
 
   // Transform data database ke format kartu UMKM
-  const allUmkms = dbUmkms.map(u => ({
+  const allUmkms = dbUmkms.map((u: any) => ({
     id: u.id,
     namaBisnis: u.title,
     kategori: u.category as any,

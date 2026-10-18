@@ -7,55 +7,61 @@
 @theme inline {
   --font-sans: var(--font-inter), "Inter", ui-sans-serif, system-ui, sans-serif;
 
-  --color-primary: #047857;
-  --color-primary-dark: #064E3B;
-  --color-accent: #0F172A;
-  --color-accent-dark: #1E293B;
-  --color-background: #F8FAFC;
+  --color-primary: #09090B;
+  --color-primary-dark: #18181B;
+  --color-accent: #18181B;
+  --color-accent-dark: #27272A;
+  --color-background: #FAFAFA;
   --color-surface: #FFFFFF;
-  --color-border: #E2E8F0;
-  --color-text-main: #0F172A;
-  --color-text-muted: #475569;
+  --color-border: #E4E4E7;
+  --color-text-main: #09090B;
+  --color-text-muted: #71717A;
   --color-success: #10B981;
-  --color-warning: #D97706;
+  --color-warning: #F59E0B;
   --color-danger: #EF4444;
-  --color-ring: #047857;
+  --color-ring: #09090B;
 
   --radius-xl: 0.75rem;
   --radius-2xl: 1rem;
 
-  --animate-fade-in: fadeIn 0.5s ease-in-out;
-  --animate-slide-up: slideUp 0.4s ease-out;
+  --font-weight-400: 400;
+  --font-weight-500: 500;
+  --font-weight-600: 600;
+  --font-weight-700: 700;
+  --font-weight-800: 800;
+
+  --animate-fade-in: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-up: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 
   @keyframes fadeIn {
     0% { opacity: 0; }
     100% { opacity: 1; }
   }
   @keyframes slideUp {
-    0% { opacity: 0; transform: translateY(16px); }
+    0% { opacity: 0; transform: translateY(8px); }
     100% { opacity: 1; transform: translateY(0); }
   }
 }
 
 :root {
-  --background: #F8FAFC;
-  --foreground: #0F172A;
+  --background: #FAFAFA;
+  --foreground: #09090B;
   --card: #FFFFFF;
-  --card-foreground: #0F172A;
+  --card-foreground: #09090B;
   --popover: #FFFFFF;
-  --popover-foreground: #0F172A;
-  --primary: #047857;
+  --popover-foreground: #09090B;
+  --primary: #09090B;
   --primary-foreground: #FFFFFF;
-  --secondary: #F1F5F9;
-  --secondary-foreground: #0F172A;
-  --muted: #F1F5F9;
-  --muted-foreground: #475569;
-  --accent: #0F172A;
+  --secondary: #F4F4F5;
+  --secondary-foreground: #09090B;
+  --muted: #F4F4F5;
+  --muted-foreground: #71717A;
+  --accent: #18181B;
   --accent-foreground: #FFFFFF;
   --destructive: #EF4444;
-  --border: #E2E8F0;
-  --input: #E2E8F0;
-  --ring: #047857;
+  --border: #E4E4E7;
+  --input: #E4E4E7;
+  --ring: #09090B;
   --radius: 0.75rem;
 }
 
@@ -65,7 +71,8 @@
   }
 
   html {
-    font-family: var(--font-poppins), "Poppins", ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-sans);
+    background-color: var(--background);
   }
 
   body {
@@ -81,13 +88,32 @@
     max-width: 72rem;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
   }
   @media (min-width: 768px) {
     .container-custom {
       padding-left: 2rem;
       padding-right: 2rem;
     }
+  }
+}
+
+/* Custom Nav Visibility Classes */
+.nav-desktop-only {
+  display: none !important;
+}
+@media (min-width: 768px) {
+  .nav-desktop-only {
+    display: flex !important;
+  }
+}
+
+.nav-mobile-only {
+  display: flex !important;
+}
+@media (min-width: 768px) {
+  .nav-mobile-only {
+    display: none !important;
   }
 }

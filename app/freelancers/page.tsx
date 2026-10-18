@@ -1,110 +1,43 @@
-"use client"
-import { useMemo, useState } from 'react'
-import Navbar from '../../components/layout/Navbar'
-import Footer from '../../components/layout/Footer'
-import FreelancerFilter from '../../components/freelancer/FreelancerFilter'
-import FreelancerCard from '../../components/freelancer/FreelancerCard'
-import { freelancers, semuaKota } from '../../lib/data'
+import Navbar from '@/components/layout/Navbar'
+import Footer from '@/components/layout/Footer'
+import { semuaKota } from '@/lib/data'
+import { getAllFreelancers } from '@/lib/actions/freelancer'
+import FreelancerListClient from './FreelancerListClient'
 
-export default function Page() {
-  const [filters, setFilters] = useState({ kota: '', skills: [] as string[], ketersediaan: '', q: '' })
-  const [page, setPage] = useState(1)
-  const perPage = 6
-
-  const skillsOptions = useMemo(() => {
-    const s = new Set<string>()
-    freelancers.forEach(f => f.skills.forEach(x => s.add(x)))
-    return Array.from(s)
-  }, [])
-
-  const filtered = useMemo(() => {
-    const q = filters.q.toLowerCase()
-    return freelancers.filter(f => {
-      if (filters.kota && f.kota !== filters.kota) return false
-      if (filters.ketersediaan && f.ketersediaan !== filters.ketersediaan) return false
-      if (filters.skills.length > 0 && !filters.skills.every(s => f.skills.includes(s))) return false
-      if (q && !(f.nama.toLowerCase().includes(q) || f.skills.join(' ').toLowerCase().includes(q))) return false
-      return true
-    })
-  }, [filters])
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / perPage))
-  const pageItems = filtered.slice((page - 1) * perPage, page * perPage)
+export default async function FreelancersPage({
+  searchParams
+}: {
+  searchParams?: Promise<{ q?: string; kota?: string }>
+}) {
+  const params = searchParams ? await searchParams : {}
+  const freelancers = await getAllFreelancers()
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F8FAFC]">
+    <div className="flex flex-col min-h-screen bg-[#FAFAFA] text-zinc-900">
       <Navbar />
 
       {/* Header */}
-      <div className="bg-white border-b border-[#E2E8F0] py-16">
-        <div className="container-custom text-center">
-          <h1 className="text-3xl md:text-4xl font-700 tracking-tight text-[#1A202C]">
+      <div className="bg-white border-b border-zinc-200/80 py-12 md:py-16">
+        <div className="container-custom max-w-3xl text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 text-zinc-700 text-xs font-medium mb-4 border border-zinc-200/60">
+            Katalog Talenta Terverifikasi
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-zinc-950">
             Direktori Freelancer
           </h1>
-          <p className="mt-4 text-[#64748B] max-w-2xl mx-auto text-base">
-            Temukan talenta terbaik Kepulauan Riau untuk membantu proyek dan bisnis Anda berkembang dengan profesionalisme tinggi.
+          <p className="mt-3 text-zinc-500 max-w-xl mx-auto text-sm md:text-base font-normal leading-relaxed">
+            Temukan profesional mandiri di Kepulauan Riau untuk membantu kebutuhan desain, software, multimedia, hingga jasa teknis.
           </p>
         </div>
       </div>
 
-      <main className="container-custom py-12 flex-1">
-        {/* Filter Section */}
-        <FreelancerFilter
-          kotaOptions={semuaKota}
-          skillsOptions={skillsOptions}
-          onChange={(f) => { 
-            setFilters({
-              kota: f.kota || '',
-              skills: f.skills || [],
-              ketersediaan: f.ketersediaan || '',
-              q: f.q || ''
-            }); 
-            setPage(1); 
-          }}
+      <main className="container-custom py-10 md:py-14 flex-1">
+        <FreelancerListClient 
+          initialFreelancers={freelancers} 
+          semuaKota={semuaKota}
+          initialKota={params?.kota || ''}
+          initialQ={params?.q || ''}
         />
-
-        <div className="flex items-center justify-between mb-8">
-          <div className="text-sm font-500 text-[#64748B]">
-            Menampilkan <span className="text-[#1A202C] font-600">{filtered.length}</span> talenta kreatif
-          </div>
-        </div>
-
-        {filtered.length === 0 ? (
-          <div className="text-center py-24 bg-white rounded-2xl border border-[#E2E8F0] shadow-sm">
-            <div className="text-[#64748B] mb-4 text-5xl">🔍</div>
-            <h3 className="text-lg font-600 text-[#1A202C] mb-2">Tidak ditemukan</h3>
-            <p className="text-[#64748B]">Coba sesuaikan kata kunci atau filter pencarian Anda.</p>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-slide-up">
-              {pageItems.map(f => <FreelancerCard key={f.id} f={f} />)}
-            </div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-12 flex items-center justify-center gap-6">
-                <button
-                  disabled={page <= 1}
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
-                  className="px-5 py-2.5 border border-[#E2E8F0] rounded-xl text-sm font-500 text-[#1A202C] bg-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 transition-all shadow-sm"
-                >
-                  Sebelumnya
-                </button>
-                <div className="text-sm font-500 text-[#64748B]">
-                  Halaman <span className="text-[#1A202C]">{page}</span> dari {totalPages}
-                </div>
-                <button
-                  disabled={page >= totalPages}
-                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                  className="px-5 py-2.5 border border-[#E2E8F0] rounded-xl text-sm font-500 text-[#1A202C] bg-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 transition-all shadow-sm"
-                >
-                  Berikutnya
-                </button>
-              </div>
-            )}
-          </>
-        )}
       </main>
 
       <Footer />

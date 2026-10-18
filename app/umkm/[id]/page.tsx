@@ -1,218 +1,174 @@
-import Navbar from '../../../components/layout/Navbar'
-import Footer from '../../../components/layout/Footer'
-import { umkms } from '../../../lib/data'
-import Image from 'next/image'
-import { MapPin, BadgeCheck, Clock, Eye, Store, MessageCircle, Map as MapIcon, Star } from 'lucide-react'
-import { FaInstagram } from 'react-icons/fa'
-import { SiShopee } from 'react-icons/si'
+import Navbar from '@/components/layout/Navbar'
+import Footer from '@/components/layout/Footer'
+import { getUMKMById } from '@/lib/actions/umkm'
+import { MapPin, Clock, MessageCircle, ExternalLink } from 'lucide-react'
 
 type Props = { params: Promise<{ id: string }> }
 
-export default async function Page({ params }: Props) {
+export default async function UMKMDetailPage({ params }: Props) {
   const { id } = await params
-  const u = umkms.find(x => x.id === id)
+  const u = await getUMKMById(id)
 
   if (!u) return (
-    <div className="flex flex-col min-h-screen bg-[#F8FAFC]">
+    <div className="flex flex-col min-h-screen bg-[#FAFAFA] text-zinc-900">
       <Navbar />
-      <main className="container-custom text-center py-20 flex-1">
-        <h2 className="text-2xl font-600 text-[#1A202C]">UMKM tidak ditemukan</h2>
+      <main className="max-w-4xl mx-auto px-4 md:px-8 text-center py-24 flex-1 w-full">
+        <h2 className="text-xl font-bold text-zinc-950">UMKM Tidak Ditemukan</h2>
+        <p className="text-sm text-zinc-500 mt-2">Data usaha yang Anda cari mungkin sudah tidak aktif atau dihapus.</p>
+        <a href="/umkm" className="inline-block mt-6 px-4 py-2 bg-zinc-950 text-white text-xs font-semibold rounded-lg">
+          Kembali ke Direktori UMKM
+        </a>
       </main>
       <Footer />
     </div>
   )
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F8FAFC]">
+    <div className="flex flex-col min-h-screen bg-[#FAFAFA] text-zinc-900">
       <Navbar />
-      
-      <main className="container-custom py-12 flex-1">
-        <div className="flex flex-col md:flex-row gap-8 items-start">
+
+      <main className="max-w-6xl mx-auto px-4 md:px-8 py-10 md:py-14 flex-1 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
 
           {/* Sidebar Kiri (Info & Kontak) */}
-          <aside className="w-full md:w-1/3 md:sticky md:top-24">
-            <div className="bg-white rounded-2xl p-6 border border-[#E2E8F0] shadow-sm text-center">
+          <aside className="md:col-span-4 md:sticky md:top-24">
+            <div className="bg-white rounded-xl p-6 border border-zinc-200/90 shadow-xs text-center">
               <div className="relative inline-block mx-auto mb-4">
-                <Image
-                  src={u.logo}
-                  alt={u.namaBisnis}
-                  width={96}
-                  height={96}
-                  className="rounded-2xl w-24 h-24 object-cover border border-[#E2E8F0] mx-auto"
-                />
-                {u.terverifikasi && (
-                  <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1 shadow-sm">
-                    <BadgeCheck size={24} className="text-[#0077B6] fill-white" />
+                {u.imageUrls[0] ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={u.imageUrls[0]}
+                    alt={u.title}
+                    className="rounded-xl w-22 h-22 object-cover border border-zinc-200 mx-auto"
+                  />
+                ) : (
+                  <div className="w-22 h-22 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-400 text-xs mx-auto">
+                    No Image
                   </div>
                 )}
               </div>
 
-              <h1 className="text-xl font-600 text-[#1A202C] mb-1">{u.namaBisnis}</h1>
-              <div className="flex items-center justify-center text-amber-500 text-sm font-600 mb-4">
-                <Star size={16} className="mr-1 fill-amber-500" />
-                {u.rating} <span className="text-[#64748B] font-400 ml-1">({u.reviews.length} Ulasan)</span>
+              <h1 className="text-lg font-bold text-zinc-950 mb-1">{u.title}</h1>
+              <div className="flex items-center justify-center gap-1.5 mb-2">
+                <span className="inline-block bg-zinc-100 text-zinc-700 text-xs font-medium px-2.5 py-0.5 rounded">
+                  {u.category}
+                </span>
               </div>
-              <span className="inline-block bg-[#FFF7ED] text-[#C2410C] text-xs font-600 px-3 py-1 rounded-full mb-6">
-                {u.kategori}
-              </span>
+              <p className="text-xs text-zinc-500 mb-5">
+                Pengelola: {u.owner?.name || 'Pelaku Usaha Lokal'}
+              </p>
 
-              <div className="space-y-3">
-                <a
-                  href={`https://wa.me/${u.nomorWA}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-full flex items-center justify-center gap-2 bg-[#25D366] text-white py-3 rounded-xl font-500 hover:opacity-90 transition-all"
-                >
-                  <MessageCircle size={18} />
-                  WhatsApp
-                </a>
-
-                {u.instagramUrl && (
-                  <a
-                    href={u.instagramUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#833AB4] to-[#E1306C] text-white py-3 rounded-xl font-500 hover:opacity-90 transition-all"
-                  >
-                    <FaInstagram size={18} />
-                    Instagram
-                  </a>
-                )}
-
-                {u.tokopediaUrl && (
-                  <a
-                    href={u.tokopediaUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="w-full flex items-center justify-center gap-2 bg-[#42B549] text-white py-3 rounded-xl font-500 hover:opacity-90 transition-all"
-                  >
-                    <Store size={18} />
-                    Tokopedia
-                  </a>
-                )}
-
-                {u.shopeeUrl && (
-                  <a
-                    href={u.shopeeUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="w-full flex items-center justify-center gap-2 bg-[#EE4D2D] text-white py-3 rounded-xl font-500 hover:opacity-90 transition-all"
-                  >
-                    <SiShopee size={18} />
-                    Shopee
-                  </a>
-                )}
-              </div>
-
-              <div className="mt-8 pt-6 border-t border-[#E2E8F0]">
-                <div className="flex justify-between items-center text-sm">
-                  <div className="flex items-center text-[#64748B]">
-                    <Eye size={16} className="mr-2" />
-                    Total Dilihat
-                  </div>
-                  <span className="font-600">{u.totalDilihat} kali</span>
+              <div className="space-y-2.5">
+                <div className="w-full flex items-center justify-center gap-1.5 bg-zinc-50 text-zinc-700 border border-zinc-200 py-2 rounded-lg text-xs font-medium">
+                  <MapPin size={14} className="text-zinc-400" />
+                  {u.location}
                 </div>
+                {u.whatsapp && (
+                  <a
+                    href={`https://wa.me/${u.whatsapp.replace(/\D/g, '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-2 bg-zinc-950 hover:bg-zinc-800 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-xs"
+                  >
+                    <MessageCircle size={16} />
+                    Hubungi via WhatsApp
+                  </a>
+                )}
               </div>
+
+              {u.targetFunding > 0 && (
+                <div className="mt-6 pt-5 border-t border-zinc-100 text-left">
+                  <div className="text-[10px] font-semibold uppercase text-zinc-400 tracking-wider mb-0.5">Estimasi Layanan / Produk</div>
+                  <div className="text-base font-bold text-zinc-950">Mulai Rp {u.targetFunding.toLocaleString('id-ID')}</div>
+                </div>
+              )}
             </div>
           </aside>
 
           {/* Konten Utama (Kanan) */}
-          <div className="w-full md:w-2/3 space-y-6">
-            <section className="bg-white rounded-2xl p-8 border border-[#E2E8F0] shadow-sm animate-fade-in">
-              <h2 className="text-xl font-600 text-[#1A202C] mb-4">Tentang Bisnis</h2>
-              <p className="text-[#64748B] leading-relaxed whitespace-pre-line">
-                {u.deskripsi}
+          <div className="md:col-span-8 space-y-6">
+            <section className="bg-white rounded-xl p-6 md:p-8 border border-zinc-200/90 shadow-xs">
+              <h2 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-3">Tentang Usaha</h2>
+              <p className="text-sm text-zinc-600 leading-relaxed whitespace-pre-line font-normal">
+                {u.description || 'Belum ada deskripsi usaha.'}
               </p>
             </section>
 
-            <section className="bg-white rounded-2xl p-8 border border-[#E2E8F0] shadow-sm animate-fade-in" style={{ animationDelay: '0.1s' }}>
-              <h2 className="text-xl font-600 text-[#1A202C] mb-6">Informasi Operasional</h2>
+            <section className="bg-white rounded-xl p-6 md:p-8 border border-zinc-200/90 shadow-xs">
+              <h2 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-4">Ringkasan Info</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex gap-4 p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
-                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0 border border-[#E2E8F0] text-[#0077B6]">
-                    <Clock size={20} />
+                <div className="flex items-center gap-3 p-3.5 rounded-lg bg-zinc-50 border border-zinc-200/80">
+                  <div className="w-8 h-8 rounded-md bg-white flex items-center justify-center shrink-0 border border-zinc-200 text-zinc-700">
+                    <MapPin size={16} />
                   </div>
                   <div>
-                    <div className="text-[10px] font-600 uppercase text-[#64748B] tracking-wider">Jam Operasional</div>
-                    <div className="text-[#1A202C] font-500 text-sm mt-0.5">{u.jamBuka}</div>
+                    <div className="text-[10px] font-semibold uppercase text-zinc-400 tracking-wider">Domisili Usaha</div>
+                    <div className="text-zinc-900 font-medium text-xs mt-0.5">{u.location}</div>
                   </div>
                 </div>
-                <div className="flex gap-4 p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
-                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0 border border-[#E2E8F0] text-[#0077B6]">
-                    <MapPin size={20} />
+                <div className="flex items-center gap-3 p-3.5 rounded-lg bg-zinc-50 border border-zinc-200/80">
+                  <div className="w-8 h-8 rounded-md bg-white flex items-center justify-center shrink-0 border border-zinc-200 text-zinc-700">
+                    <Clock size={16} />
                   </div>
                   <div>
-                    <div className="text-[10px] font-600 uppercase text-[#64748B] tracking-wider">Lokasi</div>
-                    <div className="text-[#1A202C] font-500 text-sm mt-0.5">{u.kota}</div>
+                    <div className="text-[10px] font-semibold uppercase text-zinc-400 tracking-wider">Kategori Produk</div>
+                    <div className="text-zinc-900 font-medium text-xs mt-0.5">{u.category}</div>
                   </div>
                 </div>
-              </div>
-
-              <div className="mt-6">
-                <div className="text-[10px] font-600 uppercase text-[#64748B] tracking-wider mb-2">Alamat Lengkap</div>
-                <p className="text-[#1A202C] text-sm font-400">{u.alamat}</p>
               </div>
             </section>
 
-            <section className="bg-white rounded-2xl border border-[#E2E8F0] shadow-sm overflow-hidden animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              <div className="p-4 border-b border-[#E2E8F0] bg-[#F8FAFC] flex items-center gap-2">
-                <MapIcon size={18} className="text-[#0077B6]" />
-                <h3 className="text-sm font-600 text-[#1A202C]">Peta Lokasi</h3>
-              </div>
-              <div className="aspect-video w-full">
-                <iframe
-                  src={u.googleMapsUrl}
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                ></iframe>
-              </div>
-            </section>
-
-            {u.galeriProduk && u.galeriProduk.length > 0 && (
-              <section className="bg-white rounded-2xl p-8 border border-[#E2E8F0] shadow-sm animate-fade-in" style={{ animationDelay: '0.3s' }}>
-                <h2 className="text-xl font-600 text-[#1A202C] mb-6">Galeri Produk</h2>
+            {u.imageUrls.length > 0 && (
+              <section className="bg-white rounded-xl p-6 md:p-8 border border-zinc-200/90 shadow-xs">
+                <h2 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-4">Galeri Produk / Tempat</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {u.galeriProduk.map((img, i) => (
-                    <div key={i} className="relative aspect-video rounded-xl overflow-hidden border border-[#E2E8F0] group">
-                      <Image src={img} alt="Produk" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  {u.imageUrls.map((img: string, i: number) => (
+                    <div key={i} className="relative aspect-video rounded-lg overflow-hidden border border-zinc-200 group">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={img} alt="Foto Produk" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     </div>
                   ))}
                 </div>
               </section>
             )}
 
-            <section className="bg-white rounded-2xl p-8 border border-[#E2E8F0] shadow-sm animate-fade-in" style={{ animationDelay: '0.4s' }}>
-              <h2 className="text-xl font-600 text-[#1A202C] mb-6">Ulasan Pelanggan ({u.reviews.length})</h2>
-              {u.reviews.length === 0 ? (
-                <p className="text-[#64748B] text-sm">Belum ada ulasan untuk bisnis ini.</p>
-              ) : (
-                <div className="space-y-6">
-                  {u.reviews.map(r => (
-                    <div key={r.id} className="border-b border-[#E2E8F0] last:border-0 pb-6 last:pb-0">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="font-600 text-[#1A202C]">{r.namaPengguna}</div>
-                        <div className="text-xs text-[#64748B]">{r.tanggal}</div>
-                      </div>
-                      <div className="flex text-amber-500 mb-2">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} size={14} className={i < r.rating ? "fill-amber-500" : "text-slate-300"} />
-                        ))}
-                      </div>
-                      <p className="text-sm text-[#64748B]">{r.komentar}</p>
-                    </div>
-                  ))}
+            <section className="bg-white rounded-xl p-6 md:p-8 border border-zinc-200/90 shadow-xs">
+              <h2 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-4">Lokasi &amp; Peta</h2>
+              
+              {u.gmapsUrl && (u.gmapsUrl.startsWith('http://') || u.gmapsUrl.startsWith('https://')) && (
+                <div className="mb-4">
+                  <a 
+                    href={u.gmapsUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-950 hover:underline"
+                  >
+                    Buka Google Maps <ExternalLink size={13} />
+                  </a>
                 </div>
               )}
+
+              <div className="w-full h-60 md:h-72 rounded-lg overflow-hidden border border-zinc-200 bg-zinc-100">
+                <iframe 
+                  width="100%" 
+                  height="100%" 
+                  frameBorder="0" 
+                  scrolling="no" 
+                  marginHeight={0} 
+                  marginWidth={0} 
+                  src={`https://maps.google.com/maps?q=${encodeURIComponent(
+                    u.gmapsUrl && !u.gmapsUrl.startsWith('http') 
+                      ? u.gmapsUrl 
+                      : `${u.title} ${u.location}`
+                  )}&output=embed`}
+                ></iframe>
+              </div>
             </section>
           </div>
 
         </div>
       </main>
-      
+
       <Footer />
     </div>
   )

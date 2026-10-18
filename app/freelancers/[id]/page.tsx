@@ -1,93 +1,93 @@
 import Navbar from '../../../components/layout/Navbar'
 import Footer from '../../../components/layout/Footer'
-import { freelancers } from '../../../lib/data'
-import ContactModal from '../../../components/freelancer/ContactModal'
+import { getFreelancerById } from '@/lib/actions/freelancer'
 import Image from 'next/image'
-import { MapPin, BadgeCheck, Clock, Eye, Calendar, ExternalLink, MessageCircle, Star } from 'lucide-react'
+import { MapPin, BadgeCheck, Eye, Calendar, ExternalLink, MessageCircle, Star } from 'lucide-react'
 import { FaInstagram, FaLinkedin } from 'react-icons/fa'
 
 type Props = { params: Promise<{ id: string }> }
 
 export default async function Page({ params }: Props) {
   const { id } = await params
-  const f = freelancers.find(x => x.id === id)
+  const f = await getFreelancerById(id)
 
   if (!f) return (
-    <div className="flex flex-col min-h-screen bg-[#F8FAFC]">
+    <div className="flex flex-col min-h-screen bg-[#FAFAFA] text-zinc-900">
       <Navbar />
-      <main className="container-custom text-center py-20 flex-1">
-        <h2 className="text-2xl font-600 text-[#1A202C]">Freelancer tidak ditemukan</h2>
+      <main className="max-w-4xl mx-auto px-4 md:px-8 text-center py-24 flex-1 w-full">
+        <h2 className="text-xl font-bold text-zinc-950">Freelancer Tidak Ditemukan</h2>
+        <p className="text-sm text-zinc-500 mt-2">Profil yang Anda cari mungkin telah dinonaktifkan atau dihapus.</p>
+        <a href="/freelancers" className="inline-block mt-6 px-4 py-2 bg-zinc-950 text-white text-xs font-semibold rounded-lg">
+          Kembali ke Direktori
+        </a>
       </main>
       <Footer />
     </div>
   )
 
-  const statusColors = {
-    'Tersedia': 'bg-[#D1FAE5] text-[#065F46]',
-    'Sibuk': 'bg-[#FEF3C7] text-[#92400E]',
-    'Tidak Tersedia': 'bg-[#FEE2E2] text-[#991B1B]'
-  }
-  const badgeColor = statusColors[f.ketersediaan as keyof typeof statusColors] || 'bg-slate-100 text-slate-600'
+  const isAvailable = f.ketersediaan === 'Tersedia'
+  const isBusy = f.ketersediaan === 'Sibuk'
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F8FAFC]">
+    <div className="flex flex-col min-h-screen bg-[#FAFAFA] text-zinc-900">
       <Navbar />
       
-      <main className="container-custom py-12 flex-1">
-        <div className="flex flex-col md:flex-row gap-8 items-start">
+      <main className="max-w-6xl mx-auto px-4 md:px-8 py-10 md:py-14 flex-1 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
 
           {/* Sidebar Kiri (Sticky) */}
-          <aside className="w-full md:w-1/3 md:sticky md:top-24">
-            <div className="bg-white rounded-2xl p-6 border border-[#E2E8F0] shadow-sm text-center">
+          <aside className="md:col-span-4 md:sticky md:top-24">
+            <div className="bg-white rounded-xl p-6 border border-zinc-200/90 shadow-xs text-center">
               <div className="relative inline-block mx-auto mb-4">
                 <Image
-                  src={f.avatar}
+                  src={f.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=180&auto=format&fit=crop'}
                   alt={f.nama}
-                  width={96}
-                  height={96}
-                  className="rounded-full w-24 h-24 object-cover ring-4 ring-[#047857]/20 mx-auto"
+                  width={88}
+                  height={88}
+                  unoptimized
+                  className="rounded-xl w-22 h-22 object-cover border border-zinc-200 mx-auto"
                 />
                 {f.terverifikasi && (
-                  <div className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-sm">
-                    <BadgeCheck size={24} className="text-[#0077B6] fill-white" />
+                  <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-xs" title="Terverifikasi">
+                    <BadgeCheck size={20} className="text-zinc-950 fill-zinc-100" />
                   </div>
                 )}
               </div>
 
-              <h1 className="text-xl font-600 text-[#1A202C] mb-1">{f.nama}</h1>
-              <div className="flex items-center justify-center text-[#64748B] text-sm mb-2">
-                <MapPin size={14} className="mr-1" />
+              <h1 className="text-lg font-bold text-zinc-950 mb-1">{f.nama}</h1>
+              <div className="flex items-center justify-center text-zinc-500 text-xs mb-3">
+                <MapPin size={13} className="mr-1 text-zinc-400" />
                 {f.kota}
               </div>
-              <div className="flex items-center justify-center text-amber-500 text-sm font-600 mb-4">
-                <Star size={16} className="mr-1 fill-amber-500" />
-                {f.rating} <span className="text-[#64748B] font-400 ml-1">({f.reviews.length} Ulasan)</span>
+
+              {/* Status Pill */}
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-100 text-xs font-medium text-zinc-700 mb-6 border border-zinc-200/70">
+                <span className={`w-2 h-2 rounded-full ${isAvailable ? 'bg-emerald-500' : isBusy ? 'bg-amber-500' : 'bg-zinc-400'}`}></span>
+                {f.ketersediaan || 'Tersedia'}
               </div>
 
-              <div className={`inline-block px-3 py-1 rounded-full text-xs font-600 mb-6 ${badgeColor}`}>
-                {f.ketersediaan}
-              </div>
-
-              {f.tarifPerJam && (
-                <div className="bg-[#F8FAFC] rounded-xl p-4 border border-[#E2E8F0] mb-6">
-                  <div className="text-xs text-[#64748B] font-500 uppercase tracking-wider mb-1">Mulai Dari</div>
-                  <div className="text-lg font-700 text-[#0077B6]">
-                    Rp {f.tarifPerJam.toLocaleString('id-ID')} <span className="text-xs font-400 text-[#64748B]">/ jam</span>
-                  </div>
-                </div>
-              )}
-
-              <div className="space-y-3">
-                <ContactModal defaultWa={'628111222333'} />
+              {/* Action Links */}
+              <div className="space-y-2.5">
+                {f.whatsapp && (
+                  <a 
+                    href={`https://wa.me/${f.whatsapp.replace(/\D/g, '')}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-2 bg-zinc-950 hover:bg-zinc-800 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-xs"
+                  >
+                    <MessageCircle size={16} />
+                    Hubungi via WhatsApp
+                  </a>
+                )}
                 {f.instagramUrl && (
                   <a
                     href={f.instagramUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#833AB4] to-[#E1306C] text-white py-3 rounded-xl font-500 hover:opacity-90 transition-all"
+                    className="w-full flex items-center justify-center gap-2 bg-white hover:bg-zinc-50 text-zinc-800 border border-zinc-200 py-2 rounded-lg text-xs font-medium transition-colors"
                   >
-                    <FaInstagram size={18} />
-                    Instagram
+                    <FaInstagram size={14} className="text-zinc-600" />
+                    Profil Instagram
                   </a>
                 )}
                 {f.linkedinUrl && (
@@ -95,51 +95,48 @@ export default async function Page({ params }: Props) {
                     href={f.linkedinUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="w-full flex items-center justify-center gap-2 bg-[#0A66C2] text-white py-3 rounded-xl font-500 hover:opacity-90 transition-all"
+                    className="w-full flex items-center justify-center gap-2 bg-white hover:bg-zinc-50 text-zinc-800 border border-zinc-200 py-2 rounded-lg text-xs font-medium transition-colors"
                   >
-                    <FaLinkedin size={18} />
-                    LinkedIn
+                    <FaLinkedin size={14} className="text-zinc-600" />
+                    Profil LinkedIn
                   </a>
                 )}
-                <button className="w-full border border-[#E2E8F0] text-[#1A202C] font-500 py-3 rounded-xl hover:bg-slate-50 transition-colors flex items-center justify-center gap-2 mt-2">
-                  <MessageCircle size={18} />
-                  Kirim Pesan
-                </button>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-[#E2E8F0] grid grid-cols-2 gap-4">
+              {/* Stats Footer */}
+              <div className="mt-6 pt-5 border-t border-zinc-100 grid grid-cols-2 gap-4 text-xs">
                 <div className="text-left">
-                  <div className="flex items-center text-[#64748B] text-[10px] uppercase font-600 tracking-wider mb-1">
+                  <div className="flex items-center text-zinc-400 text-[10px] uppercase font-semibold tracking-wider mb-0.5">
                     <Eye size={12} className="mr-1" /> Dilihat
                   </div>
-                  <div className="text-sm font-600">{f.totalDilihat} kali</div>
+                  <div className="font-semibold text-zinc-900">{f.totalDilihat} kali</div>
                 </div>
                 <div className="text-left">
-                  <div className="flex items-center text-[#64748B] text-[10px] uppercase font-600 tracking-wider mb-1">
-                    <Calendar size={12} className="mr-1" /> Bergabung
+                  <div className="flex items-center text-zinc-400 text-[10px] uppercase font-semibold tracking-wider mb-0.5">
+                    <Calendar size={12} className="mr-1" /> Status
                   </div>
-                  <div className="text-sm font-600">Feb 2024</div>
+                  <div className="font-semibold text-zinc-900">Aktif</div>
                 </div>
               </div>
             </div>
           </aside>
 
           {/* Konten Utama (Kanan) */}
-          <div className="w-full md:w-2/3 space-y-6">
-            <section className="bg-white rounded-2xl p-8 border border-[#E2E8F0] shadow-sm animate-fade-in">
-              <h2 className="text-xl font-600 text-[#1A202C] mb-4">Tentang Saya</h2>
-              <p className="text-[#64748B] leading-relaxed whitespace-pre-line">
-                {f.bio}
+          <div className="md:col-span-8 space-y-6">
+            <section className="bg-white rounded-xl p-6 md:p-8 border border-zinc-200/90 shadow-xs">
+              <h2 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-3">Tentang Profesional</h2>
+              <p className="text-sm text-zinc-600 leading-relaxed whitespace-pre-line font-normal">
+                {f.bio || 'Belum ada deskripsi profil.'}
               </p>
             </section>
 
-            <section className="bg-white rounded-2xl p-8 border border-[#E2E8F0] shadow-sm animate-fade-in" style={{ animationDelay: '0.1s' }}>
-              <h2 className="text-xl font-600 text-[#1A202C] mb-6">Keahlian & Spesialisasi</h2>
+            <section className="bg-white rounded-xl p-6 md:p-8 border border-zinc-200/90 shadow-xs">
+              <h2 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-4">Keahlian &amp; Spesialisasi</h2>
               <div className="flex flex-wrap gap-2">
-                {f.skills.map(s => (
+                {(f.skills || []).map((s: string) => (
                   <span
                     key={s}
-                    className="px-4 py-2 bg-[#EFF6FF] border border-[#047857]/10 text-[#0077B6] font-500 text-sm rounded-xl"
+                    className="px-3 py-1 bg-zinc-100 text-zinc-800 font-medium text-xs rounded-md border border-zinc-200/60"
                   >
                     {s}
                   </span>
@@ -148,50 +145,52 @@ export default async function Page({ params }: Props) {
             </section>
 
             {f.portfolioUrl && (
-              <section className="bg-white rounded-2xl p-8 border border-[#E2E8F0] shadow-sm animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                <h2 className="text-xl font-600 text-[#1A202C] mb-4">Portfolio Eksternal</h2>
+              <section className="bg-white rounded-xl p-6 md:p-8 border border-zinc-200/90 shadow-xs">
+                <h2 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-3">Portofolio Eksternal</h2>
                 <a
                   href={f.portfolioUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 text-[#0077B6] font-500 hover:underline"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-950 hover:underline"
                 >
-                  Lihat hasil kerja eksternal <ExternalLink size={16} />
+                  Buka tautan portofolio <ExternalLink size={14} />
                 </a>
               </section>
             )}
 
             {f.portfolioImages && f.portfolioImages.length > 0 && (
-              <section className="bg-white rounded-2xl p-8 border border-[#E2E8F0] shadow-sm animate-fade-in" style={{ animationDelay: '0.3s' }}>
-                <h2 className="text-xl font-600 text-[#1A202C] mb-6">Galeri Portofolio</h2>
+              <section className="bg-white rounded-xl p-6 md:p-8 border border-zinc-200/90 shadow-xs">
+                <h2 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-4">Galeri Hasil Kerja</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {f.portfolioImages.map((img, i) => (
-                    <div key={i} className="relative aspect-video rounded-xl overflow-hidden border border-[#E2E8F0] group">
-                      <Image src={img} alt="Portfolio item" fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                  {f.portfolioImages.map((img: string, i: number) => (
+                    <div key={i} className="relative aspect-video rounded-lg overflow-hidden border border-zinc-200">
+                      <Image src={img} alt="Hasil Kerja" fill className="object-cover" />
                     </div>
                   ))}
                 </div>
               </section>
             )}
 
-            <section className="bg-white rounded-2xl p-8 border border-[#E2E8F0] shadow-sm animate-fade-in" style={{ animationDelay: '0.4s' }}>
-              <h2 className="text-xl font-600 text-[#1A202C] mb-6">Ulasan Klien ({f.reviews.length})</h2>
-              {f.reviews.length === 0 ? (
-                <p className="text-[#64748B] text-sm">Belum ada ulasan untuk freelancer ini.</p>
+            <section className="bg-white rounded-xl p-6 md:p-8 border border-zinc-200/90 shadow-xs">
+              <h2 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-4">
+                Ulasan &amp; Pengalaman Klien ({f.reviews ? f.reviews.length : 0})
+              </h2>
+              {(!f.reviews || f.reviews.length === 0) ? (
+                <p className="text-xs text-zinc-400">Belum ada ulasan yang ditinggalkan untuk talenta ini.</p>
               ) : (
-                <div className="space-y-6">
-                  {f.reviews.map(r => (
-                    <div key={r.id} className="border-b border-[#E2E8F0] last:border-0 pb-6 last:pb-0">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="font-600 text-[#1A202C]">{r.namaPengguna}</div>
-                        <div className="text-xs text-[#64748B]">{r.tanggal}</div>
+                <div className="space-y-5 divide-y divide-zinc-100">
+                  {f.reviews.map((r: any) => (
+                    <div key={r.id} className="pt-4 first:pt-0">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <div className="text-xs font-semibold text-zinc-900">{r.namaPengguna}</div>
+                        <div className="text-[11px] text-zinc-400">{r.tanggal}</div>
                       </div>
-                      <div className="flex text-amber-500 mb-2">
+                      <div className="flex text-amber-500 mb-1.5">
                         {[...Array(5)].map((_, i) => (
-                          <Star key={i} size={14} className={i < r.rating ? "fill-amber-500" : "text-slate-300"} />
+                          <Star key={i} size={12} className={i < r.rating ? "fill-amber-400 text-amber-400" : "text-zinc-200"} />
                         ))}
                       </div>
-                      <p className="text-sm text-[#64748B]">{r.komentar}</p>
+                      <p className="text-xs text-zinc-600 leading-relaxed">{r.komentar}</p>
                     </div>
                   ))}
                 </div>

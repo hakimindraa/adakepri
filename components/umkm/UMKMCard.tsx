@@ -1,62 +1,80 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { MapPin, BadgeCheck, Clock, Star } from 'lucide-react'
-import { UMKM } from '../../lib/data'
+import { MapPin, BadgeCheck, Clock, ArrowRight } from 'lucide-react'
+import ReportButton from '../ui/ReportButton'
 
-export default function UMKMCard({ u }: { u: UMKM }) {
+export default function UMKMCard({ u }: { u: any }) {
+  const businessName = u.namaBisnis || u.title || 'Usaha Lokal'
+
   return (
-    <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-50 shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col h-full group">
-      <div className="flex items-start gap-5 mb-5">
-        <div className="relative flex-shrink-0">
+    <div className="bg-white rounded-xl border border-zinc-200/90 p-5 hover:border-zinc-400 transition-all flex flex-col h-full group relative shadow-xs">
+      <div className="absolute top-4 right-4 z-10">
+        <ReportButton targetId={u.id} targetType="UMKM" targetName={businessName} />
+      </div>
+
+      {/* Top Header: Logo & Name */}
+      <div className="flex items-start gap-3.5 mb-3.5">
+        <div className="relative shrink-0">
           <Image
-            src={u.logo}
-            alt={u.namaBisnis}
-            width={64}
-            height={64}
-            className="rounded-xl w-16 h-16 md:w-20 md:h-20 object-cover border border-slate-200 group-hover:border-primary/30 transition-all"
+            src={u.logo || 'https://placehold.co/100x100?text=UMKM'}
+            alt={businessName}
+            width={52}
+            height={52}
+            unoptimized
+            className="rounded-xl w-13 h-13 object-cover border border-zinc-100"
           />
           {u.terverifikasi && (
-            <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-sm shadow-emerald-500/30">
-              <BadgeCheck size={24} className="text-primary fill-white" />
+            <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-xs" title="Terverifikasi">
+              <BadgeCheck size={16} className="text-zinc-900 fill-zinc-100" />
             </div>
           )}
         </div>
-        <div className="flex-1 min-w-0 pt-1">
-          <div className="flex items-center gap-2 mb-2">
-            <h3 className="text-xl md:text-2xl font-700 text-slate-900 truncate">{u.namaBisnis}</h3>
+
+        <div className="flex-1 min-w-0 pr-6">
+          <Link href={`/umkm/${u.id}`} className="hover:underline">
+            <h3 className="text-base font-semibold text-zinc-950 truncate tracking-tight">
+              {businessName}
+            </h3>
+          </Link>
+          <div className="flex items-center gap-2 mt-0.5">
+            <span className="flex items-center text-xs text-zinc-500 truncate">
+              <MapPin size={13} className="mr-1 text-zinc-400 shrink-0" />
+              {u.kota || 'Kepulauan Riau'}
+            </span>
+            {u.kategori && (
+              <>
+                <span className="text-zinc-300">•</span>
+                <span className="text-[11px] font-medium text-zinc-600 bg-zinc-100 px-2 py-0.5 rounded">
+                  {u.kategori}
+                </span>
+              </>
+            )}
           </div>
-          <span className="inline-block bg-amber-50 text-amber-700 text-xs md:text-sm font-600 px-4 py-1.5 rounded-full">
-            {u.kategori}
-          </span>
         </div>
       </div>
 
-      <div className="flex-1 mb-6">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="flex items-center text-slate-600 text-sm md:text-base">
-            <MapPin size={18} className="mr-1.5 flex-shrink-0" />
-            <span className="truncate">{u.kota}</span>
-          </div>
-          <div className="flex items-center text-amber-500 text-sm md:text-base font-600">
-            <Star size={16} className="mr-1 fill-amber-500 flex-shrink-0" />
-            {u.rating}
-          </div>
-        </div>
-        <p className="text-base text-slate-600 leading-relaxed line-clamp-2">
-          {u.deskripsi}
-        </p>
-      </div>
+      {/* Description */}
+      <p className="text-xs text-zinc-500 line-clamp-2 mb-4 leading-relaxed flex-1">
+        {u.deskripsi || 'Penyedia produk dan jasa lokal berkualitas di Kepulauan Riau.'}
+      </p>
 
-      <div className="mt-auto">
-        <div className="flex items-center text-slate-500 text-sm mb-5 bg-slate-50 px-3 py-2 rounded-lg">
-          <Clock size={16} className="mr-2" />
-          {u.jamBuka}
-        </div>
+      {/* Operating Hours & Action */}
+      <div className="pt-3 border-t border-zinc-100 flex items-center justify-between mt-auto">
+        {u.jamBuka && u.jamBuka !== '-' ? (
+          <div className="flex items-center text-[11px] text-zinc-500">
+            <Clock size={12} className="mr-1.5 text-zinc-400" />
+            <span className="truncate max-w-[140px]">{u.jamBuka}</span>
+          </div>
+        ) : (
+          <span className="text-[11px] text-zinc-400">Bisnis Lokal</span>
+        )}
+
         <Link
           href={`/umkm/${u.id}`}
-          className="w-full block bg-emerald-50 text-[#047857] hover:bg-[#047857] hover:text-white text-center py-3.5 rounded-xl font-600 transition-all text-base"
+          className="flex items-center gap-1 text-xs font-medium text-zinc-600 group-hover:text-zinc-950 transition-colors"
         >
-          Lihat Detail
+          <span>Detail</span>
+          <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform text-zinc-400 group-hover:text-zinc-950" />
         </Link>
       </div>
     </div>

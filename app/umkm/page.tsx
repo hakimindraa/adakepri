@@ -1,104 +1,63 @@
-"use client"
-import { useMemo, useState } from 'react'
-import Navbar from '../../components/layout/Navbar'
-import Footer from '../../components/layout/Footer'
-import UMKMFilter from '../../components/umkm/UMKMFilter'
-import UMKMCard from '../../components/umkm/UMKMCard'
-import { umkms, semuaKota } from '../../lib/data'
+import Navbar from '@/components/layout/Navbar'
+import Footer from '@/components/layout/Footer'
+import { getAllUMKM } from '@/lib/actions/umkm'
+import { semuaKota } from '@/lib/data'
+import UMKMListClient from './UMKMListClient'
 
-export default function Page() {
-  const [filters, setFilters] = useState({ kota: '', kategori: '', q: '' })
-  const [page, setPage] = useState(1)
-  const perPage = 6
+export default async function UMKMPage({
+  searchParams
+}: {
+  searchParams?: Promise<{ q?: string; kota?: string; kategori?: string }>
+}) {
+  const params = searchParams ? await searchParams : {}
+  const dbUmkms = await getAllUMKM()
 
-  const kategoriOptions = useMemo(() => Array.from(new Set(umkms.map(u => u.kategori))), [])
-
-  const filtered = useMemo(() => {
-    const q = filters.q.toLowerCase()
-    return umkms.filter(u => {
-      if (filters.kota && u.kota !== filters.kota) return false
-      if (filters.kategori && u.kategori !== filters.kategori) return false
-      if (q && !(u.namaBisnis.toLowerCase().includes(q) || u.deskripsi.toLowerCase().includes(q))) return false
-      return true
-    })
-  }, [filters])
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / perPage))
-  const pageItems = filtered.slice((page - 1) * perPage, page * perPage)
+  // Transform data database ke format kartu UMKM
+  const allUmkms = dbUmkms.map(u => ({
+    id: u.id,
+    namaBisnis: u.title,
+    kategori: u.category as any,
+    deskripsi: u.description,
+    kota: u.location,
+    alamat: u.location,
+    googleMapsUrl: '',
+    nomorWA: '',
+    jamBuka: '-',
+    logo: u.imageUrls[0] || 'https://placehold.co/100x100?text=UMKM',
+    galeriProduk: u.imageUrls,
+    terverifikasi: false,
+    totalDilihat: 0,
+    rating: 0,
+    reviews: [],
+  }))
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F8FAFC]">
+    <div className="flex flex-col min-h-screen bg-[#FAFAFA] text-zinc-900">
       <Navbar />
 
       {/* Header */}
-      <div className="bg-white border-b border-[#E2E8F0] py-16">
-        <div className="container-custom text-center">
-          <h1 className="text-3xl md:text-4xl font-700 tracking-tight text-[#1A202C]">
+      <div className="bg-white border-b border-zinc-200/80 py-12 md:py-16">
+        <div className="container-custom max-w-3xl text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 text-zinc-700 text-xs font-medium mb-4 border border-zinc-200/60">
+            Katalog Usaha Lokal Kepri
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-zinc-950">
             Direktori UMKM
           </h1>
-          <p className="mt-4 text-[#64748B] max-w-2xl mx-auto text-base">
-            Dukung bisnis lokal terbaik di Kepulauan Riau dengan menjelajahi produk & layanan unggulan mereka.
+          <p className="mt-3 text-zinc-500 max-w-xl mx-auto text-sm md:text-base font-normal leading-relaxed">
+            Dukung pertumbuhan ekonomi daerah dengan menjelajahi aneka produk unggulan, kuliner, dan layanan bisnis lokal.
           </p>
         </div>
       </div>
 
-      <main className="container-custom py-12 flex-1">
-        {/* Filter Section */}
-        <UMKMFilter
+      <main className="container-custom py-10 md:py-14 flex-1">
+        <UMKMListClient 
+          umkms={allUmkms} 
           kotaOptions={semuaKota}
-          kategoriOptions={kategoriOptions}
-          onChange={(f) => { 
-            setFilters({
-              kota: f.kota || '',
-              kategori: f.kategori || '',
-              q: f.q || ''
-            }); 
-            setPage(1); 
-          }}
+          initialKota={params?.kota || ''}
+          initialKategori={params?.kategori || ''}
+          initialQ={params?.q || ''}
         />
-
-        <div className="flex items-center justify-between mb-8">
-          <div className="text-sm font-500 text-[#64748B]">
-            Menampilkan <span className="text-[#1A202C] font-600">{filtered.length}</span> bisnis lokal
-          </div>
-        </div>
-
-        {filtered.length === 0 ? (
-          <div className="text-center py-24 bg-white rounded-2xl border border-[#E2E8F0] shadow-sm">
-            <div className="text-[#64748B] mb-4 text-5xl">🔍</div>
-            <h3 className="text-lg font-600 text-[#1A202C] mb-2">Tidak ditemukan</h3>
-            <p className="text-[#64748B]">Coba sesuaikan kata kunci atau filter kategori Anda.</p>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-slide-up">
-              {pageItems.map(u => <UMKMCard key={u.id} u={u} />)}
-            </div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-12 flex items-center justify-center gap-6">
-                <button
-                  disabled={page <= 1}
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
-                  className="px-5 py-2.5 border border-[#E2E8F0] rounded-xl text-sm font-500 text-[#1A202C] bg-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 transition-all shadow-sm"
-                >
-                  Sebelumnya
-                </button>
-                <div className="text-sm font-500 text-[#64748B]">
-                  Halaman <span className="text-[#1A202C]">{page}</span> dari {totalPages}
-                </div>
-                <button
-                  disabled={page >= totalPages}
-                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                  className="px-5 py-2.5 border border-[#E2E8F0] rounded-xl text-sm font-500 text-[#1A202C] bg-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 transition-all shadow-sm"
-                >
-                  Berikutnya
-                </button>
-              </div>
-            )}
-          </>
-        )}
       </main>
 
       <Footer />
